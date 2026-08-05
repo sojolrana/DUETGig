@@ -22,24 +22,30 @@ import com.sojolrana.duetgig.models.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private ServiceAdapter adapter;
     private List<Service> serviceList;
     private ChipGroup categoryChipGroup;
+    private FirebaseFirestore db;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        db = FirebaseFirestore.getInstance();
+
         recyclerView = view.findViewById(R.id.servicesRecyclerView);
         categoryChipGroup = view.findViewById(R.id.categoryChipGroup);
 
         setupRecyclerView();
-        setupCategories();
-        loadDummyServices();
+        loadCategories();
+        loadServices("All");
 
         return view;
     }
@@ -48,7 +54,6 @@ public class HomeFragment extends Fragment {
         serviceList = new ArrayList<>();
         adapter = new ServiceAdapter(serviceList, service -> {
             Intent intent = new Intent(getContext(), ServiceDetailActivity.class);
-            // Pass service details (simplified for now)
             intent.putExtra("title", service.getTitle());
             intent.putExtra("price", service.getPrice());
             intent.putExtra("provider", service.getProviderName());
@@ -61,23 +66,59 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
-    private void setupCategories() {
-        // Dynamic categories from "database" (dummy for now)
-        String[] categories = {"All", "Android", "Web", "AI/ML", "Design", "Graphics"};
-        for (String category : categories) {
-            Chip chip = new Chip(getContext());
-            chip.setText(category);
-            chip.setCheckable(true);
-            chip.setClickable(true);
-            categoryChipGroup.addView(chip);
-        }
+    private void loadCategories() {
+        // Fetch categories from Firestore
+        db.collection("categories")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        categoryChipGroup.removeAllViews();
+                        
+                        // Always add "All" first
+                        addCategoryChip("All");
+                        
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String categoryName = document.getString("name");
+                            if (categoryName != null) {
+                                addCategoryChip(categoryName);
+                            }
+                        }
+                    }
+                });
     }
 
-    private void loadDummyServices() {
-        serviceList.add(new Service("1", "Android App Development", "Professional Android apps using Java/Kotlin.", 150.0, "Android", "p1", "Sojol Rana", "Expert Android Developer with 3 years of experience.", 4.9f));
-        serviceList.add(new Service("2", "Web Development", "Modern and responsive websites.", 100.0, "Web", "p2", "John Doe", "Full stack web developer specializing in React and Node.", 4.7f));
-        serviceList.add(new Service("3", "AI/ML Solutions", "Build smart models for your data.", 250.0, "AI/ML", "p3", "Jane Smith", "Data Scientist and AI researcher.", 4.8f));
-        serviceList.add(new Service("4", "UI/UX Design", "Beautiful interfaces for your apps.", 80.0, "Design", "p4", "Alice Brown", "Creative designer with a focus on user experience.", 4.6f));
-        adapter.notifyDataSetChanged();
+    private void addCategoryChip(String categoryName) {
+        Chip chip = new Chip(getContext());
+        chip.setText(categoryName);
+        chip.setCheckable(true);
+        chip.setClickable(true);
+        
+        if (categoryName.equals("All")) {
+            chip.setChecked(true);
+        }
+
+        chip.setOnClickListener(v -> loadServices(categoryName));
+        categoryChipGroup.addView(chip);
+    }
+
+    private void loadServices(String category) {
+        com.google.firebase.firestore.Query query;
+        if (category.equals("All")) {
+            query = db.collection("services");
+        } else {
+            query = db.collection("services").whereEqualTo("category", category);
+        }
+
+        query.get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        serviceList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Service service = document.toObject(Service.class);
+                            serviceList.add(service);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
     }
 }
