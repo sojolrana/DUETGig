@@ -41,11 +41,19 @@ public class ProfileFragment extends Fragment {
         roleChip = view.findViewById(R.id.profileRoleChip);
         btnEdit = view.findViewById(R.id.btnEditProfile);
         btnSignOut = view.findViewById(R.id.btnSignOut);
+        MaterialButton btnEarnings = view.findViewById(R.id.btnViewEarnings);
 
         loadUserProfile();
 
         btnEdit.setOnClickListener(v -> {
             startActivity(new Intent(getContext(), EditProfileActivity.class));
+        });
+
+        btnEarnings.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new EarningsFragment())
+                    .addToBackStack(null)
+                    .commit();
         });
 
         btnSignOut.setOnClickListener(v -> {

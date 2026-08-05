@@ -42,7 +42,7 @@ public class HomeFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
-    private TextView emptyStateText;
+    private View emptyStateLayout;
     private EditText searchEditText;
     private FloatingActionButton fab;
 
@@ -57,7 +57,7 @@ public class HomeFragment extends Fragment {
         recyclerView = view.findViewById(R.id.servicesRecyclerView);
         categoryChipGroup = view.findViewById(R.id.categoryChipGroup);
         progressBar = view.findViewById(R.id.progressBar);
-        emptyStateText = view.findViewById(R.id.emptyStateText);
+        emptyStateLayout = view.findViewById(R.id.emptyStateLayout);
         searchEditText = view.findViewById(R.id.searchEditText);
         fab = view.findViewById(R.id.fabPostService);
 
@@ -168,7 +168,7 @@ public class HomeFragment extends Fragment {
     private void loadServices(String category) {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        emptyStateText.setVisibility(View.GONE);
+        emptyStateLayout.setVisibility(View.GONE);
 
         com.google.firebase.firestore.Query query;
         if (category.equals("All")) {
@@ -194,9 +194,9 @@ public class HomeFragment extends Fragment {
 
     private void updateEmptyState() {
         if (serviceList.isEmpty()) {
-            emptyStateText.setVisibility(View.VISIBLE);
+            emptyStateLayout.setVisibility(View.VISIBLE);
         } else {
-            emptyStateText.setVisibility(View.GONE);
+            emptyStateLayout.setVisibility(View.GONE);
         }
     }
 }

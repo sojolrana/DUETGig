@@ -9,6 +9,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 public class PostServiceActivity extends AppCompatActivity {
 
+    private TextInputLayout titleLayout, descLayout, priceLayout, categoryLayout;
     private TextInputEditText etTitle, etDesc, etPrice;
     private AutoCompleteTextView categoryDropdown;
     private MaterialButton btnPost;
@@ -37,6 +39,10 @@ public class PostServiceActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        titleLayout = findViewById(R.id.serviceTitleLayout);
+        descLayout = findViewById(R.id.serviceDescLayout);
+        priceLayout = findViewById(R.id.servicePriceLayout);
+        categoryLayout = findViewById(R.id.serviceCategoryLayout);
         etTitle = findViewById(R.id.etServiceTitle);
         etDesc = findViewById(R.id.etServiceDesc);
         etPrice = findViewById(R.id.etServicePrice);
@@ -45,7 +51,50 @@ public class PostServiceActivity extends AppCompatActivity {
 
         loadCategories();
 
-        btnPost.setOnClickListener(v -> postService());
+        btnPost.setOnClickListener(v -> {
+            String title = etTitle.getText() != null ? etTitle.getText().toString().trim() : "";
+            String desc = etDesc.getText() != null ? etDesc.getText().toString().trim() : "";
+            String priceStr = etPrice.getText() != null ? etPrice.getText().toString().trim() : "";
+            String category = categoryDropdown.getText().toString();
+
+            if (validateInputs(title, desc, priceStr, category)) {
+                postService(title, desc, priceStr, category);
+            }
+        });
+    }
+
+    private boolean validateInputs(String title, String desc, String price, String category) {
+        boolean isValid = true;
+
+        if (title.isEmpty()) {
+            titleLayout.setError("Title is required");
+            isValid = false;
+        } else {
+            titleLayout.setError(null);
+        }
+
+        if (desc.isEmpty()) {
+            descLayout.setError("Description is required");
+            isValid = false;
+        } else {
+            descLayout.setError(null);
+        }
+
+        if (price.isEmpty()) {
+            priceLayout.setError("Price is required");
+            isValid = false;
+        } else {
+            priceLayout.setError(null);
+        }
+
+        if (category.isEmpty()) {
+            categoryLayout.setError("Category is required");
+            isValid = false;
+        } else {
+            categoryLayout.setError(null);
+        }
+
+        return isValid;
     }
 
     private void loadCategories() {
@@ -61,17 +110,7 @@ public class PostServiceActivity extends AppCompatActivity {
         });
     }
 
-    private void postService() {
-        String title = etTitle.getText() != null ? etTitle.getText().toString().trim() : "";
-        String desc = etDesc.getText() != null ? etDesc.getText().toString().trim() : "";
-        String priceStr = etPrice.getText() != null ? etPrice.getText().toString().trim() : "";
-        String category = categoryDropdown.getText().toString();
-
-        if (title.isEmpty() || desc.isEmpty() || priceStr.isEmpty() || category.isEmpty()) {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+    private void postService(String title, String desc, String priceStr, String category) {
         double price = Double.parseDouble(priceStr);
         String userId = mAuth.getCurrentUser().getUid();
 

@@ -119,6 +119,16 @@
                 android:layout_marginTop="40dp" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewEarnings"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="View Earnings"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@id/btnEditProfile"
+                android:layout_marginTop="8dp" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSignOut"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="match_parent"
@@ -126,7 +136,7 @@
                 android:text="Sign Out"
                 android:textAllCaps="false"
                 android:textColor="#FF0000"
-                app:layout_constraintTop_toBottomOf="@id/btnEditProfile"
+                app:layout_constraintTop_toBottomOf="@id/btnViewEarnings"
                 android:layout_marginTop="8dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

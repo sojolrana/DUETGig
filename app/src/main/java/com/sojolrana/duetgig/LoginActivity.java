@@ -8,11 +8,18 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private TextInputLayout emailLayout, passwordLayout;
     private TextInputEditText emailEditText, passwordEditText;
     private MaterialButton btnLogin, btnSignUp;
     private FirebaseAuth mAuth;
@@ -25,18 +32,18 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        emailLayout = findViewById(R.id.emailLayout);
+        passwordLayout = findViewById(R.id.passwordLayout);
         emailEditText = findViewById(R.id.email);
         passwordEditText = findViewById(R.id.password);
         btnLogin = findViewById(R.id.btnLogin);
         btnSignUp = findViewById(R.id.btnSignUp);
 
         btnLogin.setOnClickListener(v -> {
-            String email = emailEditText.getText() != null ? emailEditText.getText().toString() : "";
-            String password = passwordEditText.getText() != null ? passwordEditText.getText().toString() : "";
+            String email = emailEditText.getText() != null ? emailEditText.getText().toString().trim() : "";
+            String password = passwordEditText.getText() != null ? passwordEditText.getText().toString().trim() : "";
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(LoginActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-            } else {
+            if (validateInputs(email, password)) {
                 loginUser(email, password);
             }
         });
@@ -47,10 +54,37 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private boolean validateInputs(String email, String password) {
+        boolean isValid = true;
+
+        if (email.isEmpty()) {
+            emailLayout.setError("Email is required");
+            isValid = false;
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailLayout.setError("Enter a valid email address");
+            isValid = false;
+        } else {
+            emailLayout.setError(null);
+        }
+
+        if (password.isEmpty()) {
+            passwordLayout.setError("Password is required");
+            isValid = false;
+        } else if (password.length() < 6) {
+            passwordLayout.setError("Password must be at least 6 characters");
+            isValid = false;
+        } else {
+            passwordLayout.setError(null);
+        }
+
+        return isValid;
+    }
+
     private void loginUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        saveFcmToken();
                         Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
@@ -61,5 +95,17 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void saveFcmToken() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
+                String token = task.getResult();
+                String userId = mAuth.getCurrentUser().getUid();
+                Map<String, Object> update = new HashMap<>();
+                update.put("fcmToken", token);
+                FirebaseFirestore.getInstance().collection("users").document(userId).update(update);
+            }
+        });
     }
 }

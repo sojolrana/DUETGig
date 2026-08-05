@@ -40,7 +40,7 @@ public class ProjectsFragment extends Fragment {
     private FloatingActionButton fab;
     private FirebaseFirestore db;
     private ProgressBar progressBar;
-    private TextView emptyStateText;
+    private View emptyStateLayout;
     private EditText searchEditText;
 
     @Nullable
@@ -53,7 +53,7 @@ public class ProjectsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.projectsRecyclerView);
         fab = view.findViewById(R.id.fabPostProject);
         progressBar = view.findViewById(R.id.projectProgressBar);
-        emptyStateText = view.findViewById(R.id.projectEmptyStateText);
+        emptyStateLayout = view.findViewById(R.id.projectEmptyStateLayout);
         searchEditText = view.findViewById(R.id.projectSearchEditText);
 
         setupRecyclerView();
@@ -72,6 +72,7 @@ public class ProjectsFragment extends Fragment {
         fullProjectList = new ArrayList<>();
         adapter = new ProjectAdapter(projectList, project -> {
             Intent intent = new Intent(getContext(), ProjectDetailActivity.class);
+            intent.putExtra("projectId", project.getProjectId());
             intent.putExtra("title", project.getTitle());
             intent.putExtra("budget", project.getBudget());
             intent.putExtra("description", project.getDescription());
@@ -118,7 +119,7 @@ public class ProjectsFragment extends Fragment {
     private void loadProjects() {
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        emptyStateText.setVisibility(View.GONE);
+        emptyStateLayout.setVisibility(View.GONE);
 
         db.collection("projects")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -139,9 +140,9 @@ public class ProjectsFragment extends Fragment {
 
     private void updateEmptyState() {
         if (projectList.isEmpty()) {
-            emptyStateText.setVisibility(View.VISIBLE);
+            emptyStateLayout.setVisibility(View.VISIBLE);
         } else {
-            emptyStateText.setVisibility(View.GONE);
+            emptyStateLayout.setVisibility(View.GONE);
         }
     }
 }
