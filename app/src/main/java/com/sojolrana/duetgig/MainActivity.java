@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.sojolrana.duetgig.fragments.HomeFragment;
+import com.sojolrana.duetgig.fragments.ProjectsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
             } else if (itemId == R.id.nav_projects) {
-                // selectedFragment = new ProjectsFragment();
+                selectedFragment = new ProjectsFragment();
             } else if (itemId == R.id.nav_messages) {
                 // selectedFragment = new MessagesFragment();
             } else if (itemId == R.id.nav_profile) {

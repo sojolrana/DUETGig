@@ -37,6 +37,10 @@
             android:name=".ServiceDetailActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".PostProjectActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
