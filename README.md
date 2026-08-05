@@ -1,58 +1,56 @@
-# DUETGig — Student Freelancing & Peer Service Platform 🚀
+# 🎓 DUETGig
+**A Student Freelancing and Peer Service Platform**
 
-[![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com/)
-[![Language](https://img.shields.io/badge/Language-Java-orange.svg)](https://www.java.com/)
-[![Backend](https://img.shields.io/badge/Backend-Firebase-ffca28.svg)](https://firebase.google.com/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com/)
+[![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)](https://www.java.com/)
+[![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white)](https://firebase.google.com/)
 
-**DUETGig** is a dedicated peer-to-peer marketplace mobile platform designed exclusively for students at Dhaka University of Engineering & Technology (DUET). It enables skilled engineering students to showcase their practical expertise, accept project requests, build professional portfolios, and earn income while pursuing their academic degrees.
+## 📖 Introduction
+In today's digital era, skill-based freelancing is an important opportunity for students to gain practical experience and earn income. **DUETGig** is a secure, exclusive mobile platform designed for the students of Dhaka University of Engineering & Technology (DUET). It bridges the gap between students who possess valuable technical skills (programming, app development, CAD design, robotics, etc.) and those who require affordable academic and technical services. 
 
----
+This platform serves as a Student Economic Empowerment Platform, supporting the complete journey: **Skill ➔ Experience ➔ Portfolio ➔ Income**.
 
-## 📌 Features
+## ⚠️ Problem Statement
+Despite having significant technical talent, many students lack access to structured opportunities for earning, networking, and building practical experience. Currently, there is no dedicated, trusted platform exclusively for DUET students where verified skill providers and service seekers can safely connect and collaborate.
 
-- **Student Authentication:** Secure onboarding verified for university students.
-- **Skill Profiles:** Custom portfolio pages showcasing technical skills (Programming, CAD, Web Dev, Robotics, Tutoring).
-- **Service Marketplace:** Browse and offer specialized services and peer assistance.
-- **Project Request Board:** Post project requirements and accept gig proposals.
-- **Real-Time Messaging:** Direct chat system connecting service providers and clients.
-- **Ratings & Reviews:** Transparency and trust building through peer reviews.
-- **Earnings Dashboard:** Track completed gigs and earned income.
-- **Push Notifications:** Instant updates for project requests and chat messages via Firebase Cloud Messaging.
+## 🎯 Objectives
+- **Exclusive Ecosystem:** Create a digital marketplace exclusively for DUET students.
+- **Financial Empowerment:** Help students earn income through technical and academic skills, reducing financial challenges.
+- **Skill & Portfolio Building:** Encourage continuous skill development and help students build professional portfolios before graduation.
+- **Collaboration:** Connect skilled students with those who need services, promoting knowledge sharing and a real work culture.
+- **University Prestige:** Enhance DUET's image by showcasing students' practical expertise and innovation.
 
----
+## ✨ Key Features
+- 🔐 **Student Authentication:** Secure login verifying DUET student status.
+- 👤 **Skill Profile:** Showcase technical expertise, previous work, and availability.
+- 🛒 **Service Marketplace:** Browse and offer distinct technical or academic services.
+- 🤝 **Hire Students & Project Request Board:** Post custom project requirements or directly hire peers for specific tasks.
+- 💬 **Chat System:** Integrated real-time communication between clients and freelancers.
+- ⭐ **Ratings & Reviews:** Build trust and reputation within the university community.
+- 💰 **Earnings Dashboard:** Track income, pending payments, and project financial statuses.
+- 🔔 **Notifications:** Real-time updates on project requests, messages, and platform news.
+- 🛠️ **Admin Panel:** Comprehensive moderation to ensure platform safety and quality.
 
-## 🛠 Tech Stack
+## 🛠️ Required Tools & Tech Stack
+- **Language:** Java
+- **Frontend / Framework:** Android (XML)
+- **Backend/BaaS:** Firebase Authentication, Cloud Firestore, Firebase Storage
+- **Messaging:** Firebase Cloud Messaging (FCM)
+- **Development & Design:** Android Studio, Figma
+- **Version Control:** Git, GitHub
 
-* **Frontend:** Android Native (Java/XML) - *Migration to Jetpack Compose in progress*
-* **Backend:** Firebase (Auth, Firestore, Storage, Messaging)
-* **Build System:** Kotlin DSL with Version Catalog (`libs.versions.toml`)
-* **Architecture:** MVP / Modular Android Architecture
+## 🚀 Expected Outcome
+The application will create a sustainable ecosystem where students can transform their skills into real opportunities. It is designed to support income generation, strengthen industry-ready skills, increase collaboration, and improve career readiness, ultimately contributing to the visibility of DUET through student achievements.
 
----
+## 🔮 Future Scope
+- 💳 Integrated payment gateways
+- 🤖 AI-based skill recommendations & matchmaking
+- 🏢 Internship matching and employer verification
+- 👨‍🏫 Alumni mentorship programs
+- 🌍 Multilingual support and web platform integration
+- 📜 Certificate issuance for completed milestones
 
-## 🚀 Getting Started
-
-### Prerequisites
-
-* **Android Studio:** Ladybug (2024.2.1) or newer
-* **Firebase Setup**: Create a project in the [Firebase Console](https://console.firebase.google.com/).
-* **Configuration File**: Download the `google-services.json` file and place it in the `app/` directory.
-* **Local Properties**: Ensure you have a `local.properties` file with your Android SDK path.
-
-### Installation & Setup
-
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/sojolrana/DUETGig.git
-   cd DUETGig
-   ```
-2. **Open the project in Android Studio.**
-3. **Add your `google-services.json` to the `app/` folder.**
-4. **Build and run the app.**
-
----
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+## 👨‍💻 Authors
+* **Sojol Rana**
+* **Monirul Islam**
+* **Johirul Islam**
