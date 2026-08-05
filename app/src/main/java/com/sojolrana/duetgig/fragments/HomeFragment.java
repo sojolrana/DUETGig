@@ -59,6 +59,7 @@ public class HomeFragment extends Fragment {
             intent.putExtra("provider", service.getProviderName());
             intent.putExtra("bio", service.getProviderBio());
             intent.putExtra("description", service.getDescription());
+            intent.putExtra("providerId", service.getProviderId());
             startActivity(intent);
         });
 

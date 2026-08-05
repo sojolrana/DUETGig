@@ -2,17 +2,21 @@ package com.sojolrana.duetgig;
 
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.sojolrana.duetgig.fragments.HomeFragment;
+import com.sojolrana.duetgig.fragments.MessagesFragment;
+import com.sojolrana.duetgig.fragments.ProfileFragment;
 import com.sojolrana.duetgig.fragments.ProjectsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -30,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_projects) {
                 selectedFragment = new ProjectsFragment();
             } else if (itemId == R.id.nav_messages) {
-                // selectedFragment = new MessagesFragment();
+                selectedFragment = new MessagesFragment();
             } else if (itemId == R.id.nav_profile) {
-                // selectedFragment = new ProfileFragment();
+                selectedFragment = new ProfileFragment();
             }
 
             if (selectedFragment != null) {

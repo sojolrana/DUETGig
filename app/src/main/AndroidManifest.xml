@@ -38,7 +38,15 @@
             android:exported="false" />
 
         <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".PostProjectActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".EditProfileActivity"
             android:exported="false" />
 
     </application>
