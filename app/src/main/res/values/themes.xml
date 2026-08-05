@@ -2,8 +2,15 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.DUETGig" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
     </style>
 
     <style name="Theme.DUETGig" parent="Base.Theme.DUETGig" />
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.DUETGig.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/primary</item>
+        <item name="android:statusBarColor">@color/primary</item>
+    </style>
 </resources>
