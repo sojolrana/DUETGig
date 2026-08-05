@@ -38,7 +38,15 @@
             android:exported="false" />
 
         <activity
+            android:name=".PostServiceActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".ChatActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ProjectDetailActivity"
             android:exported="false" />
 
         <activity

@@ -13,25 +13,25 @@
         android:padding="24dp">
 
         <TextView
-            android:id="@+id/detailTitle"
+            android:id="@+id/projectDetailTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Service Title"
+            android:text="Project Title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/black"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/detailPrice"
+            android:id="@+id/projectDetailBudget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$150"
+            android:text="Budget: $100"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/primary"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/detailTitle"
+            app:layout_constraintTop_toBottomOf="@id/projectDetailTitle"
             app:layout_constraintStart_toStartOf="parent" />
 
         <View
@@ -40,13 +40,13 @@
             android:layout_height="1dp"
             android:background="@color/light_grey"
             android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/detailPrice" />
+            app:layout_constraintTop_toBottomOf="@id/projectDetailBudget" />
 
         <TextView
             android:id="@+id/descriptionTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Service Description"
+            android:text="Project Description"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/black"
@@ -55,10 +55,10 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/detailDescription"
+            android:id="@+id/projectDetailDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Detailed description of the service goes here..."
+            android:text="Detailed description of the project goes here..."
             android:textSize="16sp"
             android:textColor="@color/grey"
             android:layout_marginTop="8dp"
@@ -70,13 +70,13 @@
             android:layout_height="1dp"
             android:background="@color/light_grey"
             android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/detailDescription" />
+            app:layout_constraintTop_toBottomOf="@id/projectDetailDescription" />
 
         <TextView
-            android:id="@+id/providerTitle"
+            android:id="@+id/posterTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="About the Provider"
+            android:text="Posted by"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/black"
@@ -85,75 +85,26 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/detailProviderName"
+            android:id="@+id/projectDetailPosterName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sojol Rana"
+            android:text="User Name"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/primary"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/providerTitle"
+            app:layout_constraintTop_toBottomOf="@id/posterTitle"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:id="@+id/detailProviderBio"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Provider's professional bio goes here..."
-            android:textSize="14sp"
-            android:textColor="@color/grey"
-            android:layout_marginTop="4dp"
-            app:layout_constraintTop_toBottomOf="@id/detailProviderName" />
-
-        <View
-            android:id="@+id/divider3"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/light_grey"
-            android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/detailProviderBio" />
-
-        <TextView
-            android:id="@+id/reviewsTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Reviews"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/divider3"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/reviewsRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:nestedScrollingEnabled="false"
-            app:layout_constraintTop_toBottomOf="@id/reviewsTitle" />
-
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnWriteReview"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Write a Review"
-            android:textAllCaps="false"
-            app:layout_constraintTop_toTopOf="@id/reviewsTitle"
-            app:layout_constraintBottom_toBottomOf="@id/reviewsTitle"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnHire"
+            android:id="@+id/btnApply"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="Hire Now"
+            android:text="Apply for Project"
             android:textAllCaps="false"
             android:textSize="18sp"
             app:cornerRadius="12dp"
-            app:layout_constraintTop_toBottomOf="@id/reviewsRecyclerView"
+            app:layout_constraintTop_toBottomOf="@id/projectDetailPosterName"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="40dp"
             android:layout_marginBottom="24dp"

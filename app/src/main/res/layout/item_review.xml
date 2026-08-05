@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/circle_background"
+    android:backgroundTint="@color/light_grey">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/reviewerName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reviewer Name"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+        <RatingBar
+            android:id="@+id/reviewRating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="0.5"
+            android:progressTint="@color/primary" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/reviewComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This was a great service!"
+        android:textColor="@color/grey"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/reviewTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aug 5, 2026"
+        android:textSize="12sp"
+        android:textColor="@color/grey"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

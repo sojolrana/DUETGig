@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +33,8 @@ public class MessagesFragment extends Fragment {
     private List<Chat> chatList;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private ProgressBar progressBar;
+    private TextView emptyStateText;
 
     @Nullable
     @Override
@@ -41,6 +45,9 @@ public class MessagesFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         recyclerView = view.findViewById(R.id.chatsRecyclerView);
+        progressBar = view.findViewById(R.id.messagesProgressBar);
+        emptyStateText = view.findViewById(R.id.messagesEmptyStateText);
+
         setupRecyclerView();
         loadChats();
 
@@ -64,20 +71,34 @@ public class MessagesFragment extends Fragment {
         if (mAuth.getCurrentUser() == null) return;
         String currentUserId = mAuth.getCurrentUser().getUid();
 
+        progressBar.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        emptyStateText.setVisibility(View.GONE);
+
         db.collection("chats")
                 .whereArrayContains("userIds", currentUserId)
                 .orderBy("lastTimestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((value, error) -> {
+                    progressBar.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
                     if (error != null) return;
                     if (value != null) {
                         chatList.clear();
                         for (QueryDocumentSnapshot document : value) {
                             Chat chat = document.toObject(Chat.class);
-                            // logic to set otherUserName if not stored or fetched
                             chatList.add(chat);
                         }
                         adapter.notifyDataSetChanged();
+                        updateEmptyState();
                     }
                 });
+    }
+
+    private void updateEmptyState() {
+        if (chatList.isEmpty()) {
+            emptyStateText.setVisibility(View.VISIBLE);
+        } else {
+            emptyStateText.setVisibility(View.GONE);
+        }
     }
 }
