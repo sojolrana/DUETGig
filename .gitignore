@@ -1,0 +1,17 @@
+# Android Studio & Gradle
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx/
+
+# Firebase & Secret Keys (Recommended for open source)
+app/google-services.json
+
+# Signing files
+*.jks
+*.keystore
