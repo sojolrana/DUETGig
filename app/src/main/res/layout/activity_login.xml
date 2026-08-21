@@ -5,12 +5,13 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:fitsSystemWindows="true"
-    android:background="@color/white">
+    android:background="@color/primary">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="24dp">
+        android:padding="24dp"
+        android:background="@color/window_background">
 
         <TextView
             android:id="@+id/title"
@@ -19,7 +20,7 @@
             android:text="Welcome Back"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="@color/primary"
+            android:textColor="@color/text_primary"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -31,7 +32,7 @@
             android:layout_height="wrap_content"
             android:text="Login to your DUETGig account"
             android:textSize="16sp"
-            android:textColor="@color/grey"
+            android:textColor="@color/text_secondary"
             app:layout_constraintTop_toBottomOf="@id/title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

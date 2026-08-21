@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="6dp"
+    app:cardBackgroundColor="@color/surface_color"
     app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
     app:strokeWidth="0dp">
@@ -21,7 +22,7 @@
             android:text="Web Development"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
+            android:textColor="@color/text_primary"
             android:maxLines="1"
             android:ellipsize="end" />
 
@@ -31,7 +32,7 @@
             android:layout_height="wrap_content"
             android:text="by Sojol Rana"
             android:textSize="14sp"
-            android:textColor="@color/grey"
+            android:textColor="@color/text_secondary"
             android:layout_marginTop="4dp" />
 
         <LinearLayout
@@ -64,7 +65,7 @@
                 android:text="4.8"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_primary"
                 android:layout_marginStart="4dp" />
         </LinearLayout>
     </LinearLayout>

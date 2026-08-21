@@ -30,7 +30,7 @@
             android:text="Other User"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@color/black" />
+            android:textColor="@color/text_primary" />
 
         <TextView
             android:id="@+id/chatLastMessage"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:text="Last message content..."
             android:textSize="14sp"
-            android:textColor="@color/grey"
+            android:textColor="@color/text_secondary"
             android:maxLines="1"
             android:ellipsize="end" />
     </LinearLayout>
@@ -49,6 +49,6 @@
         android:layout_height="wrap_content"
         android:text="10:30 AM"
         android:textSize="12sp"
-        android:textColor="@color/grey" />
+        android:textColor="@color/text_secondary" />
 
 </LinearLayout>

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/surface_color"
     app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
     app:strokeWidth="0dp">
@@ -21,7 +22,7 @@
             android:text="Project Title"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="@color/black" />
+            android:textColor="@color/text_primary" />
 
         <TextView
             android:id="@+id/projectDescription"
@@ -29,7 +30,7 @@
             android:layout_height="wrap_content"
             android:text="Short description of the project..."
             android:textSize="14sp"
-            android:textColor="@color/grey"
+            android:textColor="@color/text_secondary"
             android:layout_marginTop="4dp"
             android:maxLines="2"
             android:ellipsize="end" />
@@ -57,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:text="by User"
                 android:textSize="12sp"
-                android:textColor="@color/grey" />
+                android:textColor="@color/text_secondary" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/light_grey">
+    android:background="@color/window_background">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white">
+        android:background="@color/surface_color">
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,7 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:background="@color/surface_color">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -36,7 +37,7 @@
                 android:text="Manage Categories"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@color/black" />
+                android:textColor="@color/text_primary" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -78,7 +79,7 @@
                 android:text="Data Management"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_primary"
                 android:layout_marginTop="24dp" />
 
             <com.google.android.material.button.MaterialButton
@@ -96,7 +97,7 @@
                 android:text="App Statistics"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                android:textColor="@color/text_primary"
                 android:layout_marginTop="24dp" />
 
             <TextView
@@ -104,6 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Total Users: Loading..."
+                android:textColor="@color/text_primary"
                 android:layout_marginTop="8dp" />
 
             <TextView
@@ -111,6 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Total Projects: Loading..."
+                android:textColor="@color/text_primary"
                 android:layout_marginTop="4dp" />
 
         </LinearLayout>

@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/window_background">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white">
+        android:background="@color/surface_color">
 
         <TextView
             android:layout_width="wrap_content"
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="No messages yet"
-        android:textColor="@color/grey"
+        android:textColor="@color/text_secondary"
         android:textSize="16sp"
         android:visibility="gone" />
 
