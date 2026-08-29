@@ -34,7 +34,7 @@ public class MessagesFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
-    private TextView emptyStateText;
+    private View emptyStateLayout;
 
     @Nullable
     @Override
@@ -46,7 +46,7 @@ public class MessagesFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.chatsRecyclerView);
         progressBar = view.findViewById(R.id.messagesProgressBar);
-        emptyStateText = view.findViewById(R.id.messagesEmptyStateText);
+        emptyStateLayout = view.findViewById(R.id.messagesEmptyStateText);
 
         setupRecyclerView();
         loadChats();
@@ -56,10 +56,13 @@ public class MessagesFragment extends Fragment {
 
     private void setupRecyclerView() {
         chatList = new ArrayList<>();
-        adapter = new ChatListAdapter(chatList, chat -> {
+        if (mAuth.getCurrentUser() == null) return;
+        String currentUserId = mAuth.getCurrentUser().getUid();
+
+        adapter = new ChatListAdapter(chatList, currentUserId, chat -> {
             Intent intent = new Intent(getContext(), ChatActivity.class);
             intent.putExtra("chatId", chat.getChatId());
-            intent.putExtra("otherUserName", chat.getOtherUserName());
+            intent.putExtra("otherUserName", chat.getOtherUserName(currentUserId));
             startActivity(intent);
         });
 
@@ -73,32 +76,37 @@ public class MessagesFragment extends Fragment {
 
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        emptyStateText.setVisibility(View.GONE);
+        emptyStateLayout.setVisibility(View.GONE);
 
         db.collection("chats")
                 .whereArrayContains("userIds", currentUserId)
-                .orderBy("lastTimestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener((value, error) -> {
                     progressBar.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
-                    if (error != null) return;
-                    if (value != null) {
-                        chatList.clear();
-                        for (QueryDocumentSnapshot document : value) {
-                            Chat chat = document.toObject(Chat.class);
-                            chatList.add(chat);
-                        }
-                        adapter.notifyDataSetChanged();
-                        updateEmptyState();
+                    if (error != null || value == null) return;
+                    
+                    chatList.clear();
+                    for (QueryDocumentSnapshot document : value) {
+                        Chat chat = document.toObject(Chat.class);
+                        chatList.add(chat);
                     }
+                    
+                    // Sort locally by lastTimestamp descending
+                    chatList.sort((c1, c2) -> {
+                        if (c1.getLastTimestamp() == null || c2.getLastTimestamp() == null) return 0;
+                        return c2.getLastTimestamp().compareTo(c1.getLastTimestamp());
+                    });
+
+                    adapter.notifyDataSetChanged();
+                    updateEmptyState();
                 });
     }
 
     private void updateEmptyState() {
         if (chatList.isEmpty()) {
-            emptyStateText.setVisibility(View.VISIBLE);
+            emptyStateLayout.setVisibility(View.VISIBLE);
         } else {
-            emptyStateText.setVisibility(View.GONE);
+            emptyStateLayout.setVisibility(View.GONE);
         }
     }
 }

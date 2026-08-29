@@ -91,6 +91,16 @@
                 android:textAllCaps="false"
                 android:layout_marginTop="16dp" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnClearData"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clear All Marketplace Services"
+                android:textAllCaps="false"
+                android:textColor="#FF0000"
+                android:layout_marginTop="8dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

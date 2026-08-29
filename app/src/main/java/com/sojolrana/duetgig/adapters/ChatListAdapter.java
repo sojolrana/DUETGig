@@ -18,14 +18,16 @@ import java.util.Locale;
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatViewHolder> {
 
     private List<Chat> chatList;
+    private String currentUserId;
     private OnChatClickListener listener;
 
     public interface OnChatClickListener {
         void onChatClick(Chat chat);
     }
 
-    public ChatListAdapter(List<Chat> chatList, OnChatClickListener listener) {
+    public ChatListAdapter(List<Chat> chatList, String currentUserId, OnChatClickListener listener) {
         this.chatList = chatList;
+        this.currentUserId = currentUserId;
         this.listener = listener;
     }
 
@@ -39,7 +41,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         Chat chat = chatList.get(position);
-        holder.bind(chat, listener);
+        holder.bind(chat, currentUserId, listener);
     }
 
     @Override
@@ -57,8 +59,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
             time = itemView.findViewById(R.id.chatTime);
         }
 
-        public void bind(Chat chat, OnChatClickListener listener) {
-            userName.setText(chat.getOtherUserName());
+        public void bind(Chat chat, String currentUserId, OnChatClickListener listener) {
+            userName.setText(chat.getOtherUserName(currentUserId));
             lastMessage.setText(chat.getLastMessage());
             
             if (chat.getLastTimestamp() != null) {

@@ -2,21 +2,6 @@ package com.sojolrana.duetgig;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.material.button.MaterialButton;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RatingBar;
@@ -172,23 +157,34 @@ public class ServiceDetailActivity extends AppCompatActivity {
             return;
         }
 
-        // Generate a consistent Chat ID for these two users
-        String[] ids = {currentUserId, providerId};
-        Arrays.sort(ids);
-        String chatId = ids[0] + "_" + ids[1];
+        db.collection("users").document(currentUserId).get().addOnSuccessListener(userDoc -> {
+            String currentUserName = userDoc.getString("name");
+            if (currentUserName == null) currentUserName = "User";
 
-        Map<String, Object> chat = new HashMap<>();
-        chat.put("chatId", chatId);
-        chat.put("userIds", Arrays.asList(currentUserId, providerId));
-        chat.put("otherUserName", providerName); // Simplified: should ideally be dynamic
+            // Generate a consistent Chat ID for these two users
+            String[] ids = {currentUserId, providerId};
+            Arrays.sort(ids);
+            String chatId = ids[0] + "_" + ids[1];
 
-        db.collection("chats").document(chatId)
-                .set(chat, com.google.firebase.firestore.SetOptions.merge())
-                .addOnSuccessListener(aVoid -> {
-                    Intent intent = new Intent(this, ChatActivity.class);
-                    intent.putExtra("chatId", chatId);
-                    intent.putExtra("otherUserName", providerName);
-                    startActivity(intent);
-                });
+            Map<String, String> userNames = new HashMap<>();
+            userNames.put(currentUserId, currentUserName);
+            userNames.put(providerId, providerName);
+
+            Map<String, Object> chat = new HashMap<>();
+            chat.put("chatId", chatId);
+            chat.put("userIds", Arrays.asList(currentUserId, providerId));
+            chat.put("userNames", userNames);
+            chat.put("lastMessage", "Conversation started");
+            chat.put("lastTimestamp", com.google.firebase.Timestamp.now());
+
+            db.collection("chats").document(chatId)
+                    .set(chat, SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> {
+                        Intent intent = new Intent(this, ChatActivity.class);
+                        intent.putExtra("chatId", chatId);
+                        intent.putExtra("otherUserName", providerName);
+                        startActivity(intent);
+                    });
+        });
     }
 }
