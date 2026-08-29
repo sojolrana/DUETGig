@@ -185,7 +185,10 @@ public class HomeFragment extends Fragment {
                         fullServiceList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Service service = document.toObject(Service.class);
-                            fullServiceList.add(service);
+                            String status = service.getStatus();
+                            if ("Approved".equals(status)) {
+                                fullServiceList.add(service);
+                            }
                         }
                         filterServices(searchEditText.getText().toString());
                     }

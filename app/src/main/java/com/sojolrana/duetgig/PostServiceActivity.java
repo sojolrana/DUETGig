@@ -121,10 +121,10 @@ public class PostServiceActivity extends AppCompatActivity {
                 String providerBio = documentSnapshot.getString("bio");
                 
                 String serviceId = UUID.randomUUID().toString();
-                Service service = new Service(serviceId, title, desc, price, category, userId, providerName, providerBio, 5.0f);
+                Service service = new Service(serviceId, title, desc, price, category, userId, providerName, providerBio, 5.0f, "Pending");
 
                 db.collection("services").document(serviceId).set(service).addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Service posted successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Service submitted for admin approval", Toast.LENGTH_LONG).show();
                     finish();
                 });
             }

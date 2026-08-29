@@ -39,15 +39,17 @@ public class AdminFragment extends Fragment {
     private MaterialButton btnAdd, btnSeed, btnClear;
     private TextView statsUsers, statsProjects, statsServices, statsPending;
     
-    private RecyclerView categoriesRecyclerView, usersRecyclerView, projectsRecyclerView;
+    private RecyclerView categoriesRecyclerView, usersRecyclerView, projectsRecyclerView, servicesRecyclerView;
     
     private AdminCategoryAdapter categoryAdapter;
     private AdminUserAdapter userAdapter;
     private AdminProjectAdapter projectAdapter;
+    private com.sojolrana.duetgig.adapters.AdminServiceAdapter serviceAdapter;
     
     private List<Map<String, String>> categoryList;
     private List<User> userList;
     private List<Project> projectList;
+    private List<Service> serviceList;
     
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -73,6 +75,7 @@ public class AdminFragment extends Fragment {
         categoriesRecyclerView = view.findViewById(R.id.adminCategoriesRecyclerView);
         usersRecyclerView = view.findViewById(R.id.adminUsersRecyclerView);
         projectsRecyclerView = view.findViewById(R.id.adminProjectsRecyclerView);
+        servicesRecyclerView = view.findViewById(R.id.adminServicesRecyclerView);
 
         setupRecyclerViews();
 
@@ -83,6 +86,7 @@ public class AdminFragment extends Fragment {
         loadCategories();
         loadUsers();
         loadProjects();
+        loadServices();
         loadStats();
 
         return view;
@@ -129,8 +133,21 @@ public class AdminFragment extends Fragment {
                 deleteProject(projectId);
             }
         });
-        projectsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        projectsRecyclerView.setAdapter(projectAdapter);
+        // Services
+        serviceList = new ArrayList<>();
+        serviceAdapter = new com.sojolrana.duetgig.adapters.AdminServiceAdapter(serviceList, new com.sojolrana.duetgig.adapters.AdminServiceAdapter.OnServiceActionListener() {
+            @Override
+            public void onApproveService(Service service) {
+                updateServiceStatus(service);
+            }
+
+            @Override
+            public void onDeleteService(String serviceId) {
+                deleteService(serviceId);
+            }
+        });
+        servicesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        servicesRecyclerView.setAdapter(serviceAdapter);
     }
 
     private void loadCategories() {
@@ -181,12 +198,26 @@ public class AdminFragment extends Fragment {
         });
     }
 
-    private void loadStats() {
+    private void loadServices() {
         db.collection("services").addSnapshotListener((value, error) -> {
-            if (value != null) {
-                statsServices.setText("Services: " + value.size());
+            if (error != null || value == null) return;
+            serviceList.clear();
+            int servicePendingCount = 0;
+            for (QueryDocumentSnapshot doc : value) {
+                Service service = doc.toObject(Service.class);
+                serviceList.add(service);
+                if ("Pending".equals(service.getStatus())) {
+                    servicePendingCount++;
+                }
             }
+            serviceAdapter.notifyDataSetChanged();
+            statsServices.setText("Services: " + serviceList.size());
+            // Optionally add service pending count to statsPending or keep project pending count
         });
+    }
+
+    private void loadStats() {
+        // Stats handled in loadProjects and loadServices
     }
 
     private void showEditUserDialog(User user) {
@@ -277,6 +308,17 @@ public class AdminFragment extends Fragment {
                 .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Project deleted", Toast.LENGTH_SHORT).show());
     }
 
+    private void updateServiceStatus(Service service) {
+        db.collection("services").document(service.getServiceId())
+                .update("status", service.getStatus())
+                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Service status updated to " + service.getStatus(), Toast.LENGTH_SHORT).show());
+    }
+
+    private void deleteService(String serviceId) {
+        db.collection("services").document(serviceId).delete()
+                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Service deleted", Toast.LENGTH_SHORT).show());
+    }
+
     private void deleteCategory(String categoryId) {
         db.collection("categories").document(categoryId).delete()
                 .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Category deleted", Toast.LENGTH_SHORT).show());
@@ -315,10 +357,10 @@ public class AdminFragment extends Fragment {
             }
 
             // Seed services
-            Service s1 = new Service(UUID.randomUUID().toString(), "Expert Android App", "Build professional apps.", 200, "Android Dev", currentUserId, adminName, adminBio, 5.0f);
+            Service s1 = new Service(UUID.randomUUID().toString(), "Expert Android App", "Build professional apps.", 200, "Android Dev", currentUserId, adminName, adminBio, 5.0f, "Approved");
             db.collection("services").document(s1.getServiceId()).set(s1);
 
-            Service s2 = new Service(UUID.randomUUID().toString(), "CS Assignment Help", "Tutor for CS projects.", 50, "AI/ML", currentUserId, adminName, adminBio, 4.8f);
+            Service s2 = new Service(UUID.randomUUID().toString(), "CS Assignment Help", "Tutor for CS projects.", 50, "AI/ML", currentUserId, adminName, adminBio, 4.8f, "Approved");
             db.collection("services").document(s2.getServiceId()).set(s2);
 
             Toast.makeText(getContext(), "Sample data generated successfully!", Toast.LENGTH_SHORT).show();
