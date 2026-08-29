@@ -97,7 +97,7 @@ public class PostProjectActivity extends AppCompatActivity {
         String posterId = mAuth.getCurrentUser().getUid();
         String posterName = mAuth.getCurrentUser().getEmail(); // Simplified for now
 
-        Project project = new Project(projectId, title, desc, budget, posterId, posterName, category, Timestamp.now());
+        Project project = new Project(projectId, title, desc, budget, posterId, posterName, category, "Pending", Timestamp.now());
 
         db.collection("projects").document(projectId)
                 .set(project)

@@ -131,7 +131,11 @@ public class ProjectsFragment extends Fragment {
                         fullProjectList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Project project = document.toObject(Project.class);
-                            fullProjectList.add(project);
+                            String status = project.getStatus();
+                            // Show approved projects to regular users
+                            if ("Approved".equals(status)) {
+                                fullProjectList.add(project);
+                            }
                         }
                         filterProjects(searchEditText.getText().toString());
                     }

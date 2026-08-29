@@ -120,13 +120,16 @@ public class SignUpActivity extends AppCompatActivity {
             user.put("name", name);
             user.put("email", email);
             user.put("role", role);
+            user.put("status", "Pending");
+            user.put("isAdmin", false);
             user.put("fcmToken", fcmToken);
 
             db.collection("users").document(userId)
                     .set(user)
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(SignUpActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                        Toast.makeText(SignUpActivity.this, "Registration pending admin approval", Toast.LENGTH_LONG).show();
+                        mAuth.signOut();
+                        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                         startActivity(intent);
                         finishAffinity();
                     })

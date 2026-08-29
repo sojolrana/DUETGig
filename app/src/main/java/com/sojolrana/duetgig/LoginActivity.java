@@ -83,12 +83,33 @@ public class LoginActivity extends AppCompatActivity {
     private void loginUser(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        saveFcmToken();
-                        Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
+                    if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
+                        String userId = mAuth.getCurrentUser().getUid();
+                        FirebaseFirestore.getInstance().collection("users").document(userId).get()
+                                .addOnSuccessListener(doc -> {
+                                    if (doc.exists()) {
+                                        String status = doc.getString("status");
+                                        Boolean isAdmin = doc.getBoolean("isAdmin");
+                                        if (status != null && "Pending".equals(status) && !Boolean.TRUE.equals(isAdmin)) {
+                                            mAuth.signOut();
+                                            Toast.makeText(LoginActivity.this, "Your account is pending admin approval.", Toast.LENGTH_LONG).show();
+                                            return;
+                                        }
+                                        if (status != null && "Blocked".equals(status)) {
+                                            mAuth.signOut();
+                                            Toast.makeText(LoginActivity.this, "Your account has been blocked by admin.", Toast.LENGTH_LONG).show();
+                                            return;
+                                        }
+                                    }
+                                    saveFcmToken();
+                                    Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(LoginActivity.this, "Error checking account status", Toast.LENGTH_SHORT).show();
+                                });
                     } else {
                         String error = task.getException() != null ? task.getException().getMessage() : "Unknown error";
                         Toast.makeText(LoginActivity.this, "Authentication failed: " + error,
