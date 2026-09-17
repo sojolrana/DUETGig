@@ -57,10 +57,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
 
         public void bind(Message message, String currentUserId) {
-            content.setText(message.getContent());
+            content.setText(message.getContent() != null ? message.getContent() : "");
 
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) card.getLayoutParams();
-            if (message.getSenderId().equals(currentUserId)) {
+            if (currentUserId != null && currentUserId.equals(message.getSenderId())) {
                 // Sent by current user (Right side)
                 container.setGravity(Gravity.END);
                 card.setCardBackgroundColor(itemView.getContext().getColor(R.color.primary));

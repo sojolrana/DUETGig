@@ -29,7 +29,9 @@ public class User {
     public String getRole() { return role; }
     public String getBio() { return bio; }
     public String getStatus() { return status != null ? status : "Pending"; }
+
     public boolean isAdmin() { return isAdmin; }
+    public boolean getIsAdmin() { return isAdmin; }
 
     public void setUid(String uid) { this.uid = uid; }
     public void setName(String name) { this.name = name; }
@@ -38,4 +40,5 @@ public class User {
     public void setBio(String bio) { this.bio = bio; }
     public void setStatus(String status) { this.status = status; }
     public void setAdmin(boolean admin) { isAdmin = admin; }
+    public void setIsAdmin(boolean admin) { isAdmin = admin; }
 }
