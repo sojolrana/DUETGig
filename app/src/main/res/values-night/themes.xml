@@ -10,6 +10,10 @@
         <item name="android:windowBackground">@color/window_background</item>
         <item name="colorSurface">@color/surface_color</item>
 
+        <!-- Text Colors -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+
         <!-- Status Bar -->
         <item name="android:statusBarColor">@color/primary</item>
         <item name="android:windowLightStatusBar">false</item>

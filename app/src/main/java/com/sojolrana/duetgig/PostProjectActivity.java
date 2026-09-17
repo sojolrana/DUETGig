@@ -95,18 +95,36 @@ public class PostProjectActivity extends AppCompatActivity {
 
         String projectId = UUID.randomUUID().toString();
         String posterId = mAuth.getCurrentUser().getUid();
-        String posterName = mAuth.getCurrentUser().getEmail(); // Simplified for now
 
-        Project project = new Project(projectId, title, desc, budget, posterId, posterName, category, "Pending", Timestamp.now());
+        db.collection("users").document(posterId).get().addOnSuccessListener(documentSnapshot -> {
+            String posterName = "DUET User";
+            if (documentSnapshot.exists() && documentSnapshot.getString("name") != null) {
+                posterName = documentSnapshot.getString("name");
+            } else if (mAuth.getCurrentUser().getEmail() != null) {
+                posterName = mAuth.getCurrentUser().getEmail();
+            }
 
-        db.collection("projects").document(projectId)
-                .set(project)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Project posted successfully", Toast.LENGTH_SHORT).show();
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error posting project: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+            Project project = new Project(projectId, title, desc, budget, posterId, posterName, category, "Pending", Timestamp.now());
+
+            db.collection("projects").document(projectId)
+                    .set(project)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Project posted successfully", Toast.LENGTH_SHORT).show();
+                        finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error posting project: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        }).addOnFailureListener(e -> {
+            String posterName = mAuth.getCurrentUser().getEmail() != null ? mAuth.getCurrentUser().getEmail() : "DUET User";
+            Project project = new Project(projectId, title, desc, budget, posterId, posterName, category, "Pending", Timestamp.now());
+
+            db.collection("projects").document(projectId)
+                    .set(project)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Project posted successfully", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+        });
     }
 }
