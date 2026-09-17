@@ -22,8 +22,8 @@ import java.util.UUID;
 
 public class PostServiceActivity extends AppCompatActivity {
 
-    private TextInputLayout titleLayout, descLayout, priceLayout, categoryLayout;
-    private TextInputEditText etTitle, etDesc, etPrice;
+    private TextInputLayout titleLayout, descLayout, priceLayout, categoryLayout, portfolioLayout;
+    private TextInputEditText etTitle, etDesc, etPrice, etPortfolio;
     private AutoCompleteTextView categoryDropdown;
     private MaterialButton btnPost;
     private FirebaseAuth mAuth;
@@ -43,9 +43,11 @@ public class PostServiceActivity extends AppCompatActivity {
         descLayout = findViewById(R.id.serviceDescLayout);
         priceLayout = findViewById(R.id.servicePriceLayout);
         categoryLayout = findViewById(R.id.serviceCategoryLayout);
+        portfolioLayout = findViewById(R.id.servicePortfolioLayout);
         etTitle = findViewById(R.id.etServiceTitle);
         etDesc = findViewById(R.id.etServiceDesc);
         etPrice = findViewById(R.id.etServicePrice);
+        etPortfolio = findViewById(R.id.etServicePortfolio);
         categoryDropdown = findViewById(R.id.categoryDropdown);
         btnPost = findViewById(R.id.btnPostService);
 
