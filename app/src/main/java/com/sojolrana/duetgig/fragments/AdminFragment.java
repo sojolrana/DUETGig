@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,12 +17,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.sojolrana.duetgig.R;
 import com.sojolrana.duetgig.adapters.AdminCategoryAdapter;
 import com.sojolrana.duetgig.adapters.AdminProjectAdapter;
+import com.sojolrana.duetgig.adapters.AdminServiceAdapter;
 import com.sojolrana.duetgig.adapters.AdminUserAdapter;
 import com.sojolrana.duetgig.models.Project;
 import com.sojolrana.duetgig.models.Service;
@@ -44,7 +47,7 @@ public class AdminFragment extends Fragment {
     private AdminCategoryAdapter categoryAdapter;
     private AdminUserAdapter userAdapter;
     private AdminProjectAdapter projectAdapter;
-    private com.sojolrana.duetgig.adapters.AdminServiceAdapter serviceAdapter;
+    private AdminServiceAdapter serviceAdapter;
     
     private List<Map<String, String>> categoryList;
     private List<User> userList;
@@ -133,9 +136,12 @@ public class AdminFragment extends Fragment {
                 deleteProject(projectId);
             }
         });
+        projectsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        projectsRecyclerView.setAdapter(projectAdapter);
+
         // Services
         serviceList = new ArrayList<>();
-        serviceAdapter = new com.sojolrana.duetgig.adapters.AdminServiceAdapter(serviceList, new com.sojolrana.duetgig.adapters.AdminServiceAdapter.OnServiceActionListener() {
+        serviceAdapter = new AdminServiceAdapter(serviceList, new AdminServiceAdapter.OnServiceActionListener() {
             @Override
             public void onApproveService(Service service) {
                 updateServiceStatus(service);
@@ -148,6 +154,15 @@ public class AdminFragment extends Fragment {
         });
         servicesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         servicesRecyclerView.setAdapter(serviceAdapter);
+    }
+
+    private int pendingUsersCount = 0;
+    private int pendingProjectsCount = 0;
+    private int pendingServicesCount = 0;
+
+    private void updateTotalPending() {
+        int totalPending = pendingUsersCount + pendingProjectsCount + pendingServicesCount;
+        statsPending.setText("Pending: " + totalPending);
     }
 
     private void loadCategories() {
@@ -168,15 +183,20 @@ public class AdminFragment extends Fragment {
         db.collection("users").addSnapshotListener((value, error) -> {
             if (error != null || value == null) return;
             userList.clear();
+            pendingUsersCount = 0;
             for (QueryDocumentSnapshot doc : value) {
                 User user = doc.toObject(User.class);
                 if (user.getUid() == null) {
                     user.setUid(doc.getId());
                 }
                 userList.add(user);
+                if ("Pending".equals(user.getStatus())) {
+                    pendingUsersCount++;
+                }
             }
             userAdapter.notifyDataSetChanged();
             statsUsers.setText("Users: " + userList.size());
+            updateTotalPending();
         });
     }
 
@@ -184,17 +204,17 @@ public class AdminFragment extends Fragment {
         db.collection("projects").addSnapshotListener((value, error) -> {
             if (error != null || value == null) return;
             projectList.clear();
-            int pendingCount = 0;
+            pendingProjectsCount = 0;
             for (QueryDocumentSnapshot doc : value) {
                 Project project = doc.toObject(Project.class);
                 projectList.add(project);
                 if ("Pending".equals(project.getStatus())) {
-                    pendingCount++;
+                    pendingProjectsCount++;
                 }
             }
             projectAdapter.notifyDataSetChanged();
             statsProjects.setText("Projects: " + projectList.size());
-            statsPending.setText("Pending: " + pendingCount);
+            updateTotalPending();
         });
     }
 
@@ -202,30 +222,30 @@ public class AdminFragment extends Fragment {
         db.collection("services").addSnapshotListener((value, error) -> {
             if (error != null || value == null) return;
             serviceList.clear();
-            int servicePendingCount = 0;
+            pendingServicesCount = 0;
             for (QueryDocumentSnapshot doc : value) {
                 Service service = doc.toObject(Service.class);
                 serviceList.add(service);
                 if ("Pending".equals(service.getStatus())) {
-                    servicePendingCount++;
+                    pendingServicesCount++;
                 }
             }
             serviceAdapter.notifyDataSetChanged();
             statsServices.setText("Services: " + serviceList.size());
-            // Optionally add service pending count to statsPending or keep project pending count
+            updateTotalPending();
         });
     }
 
     private void loadStats() {
-        // Stats handled in loadProjects and loadServices
+        // Handled dynamically in listeners
     }
 
     private void showEditUserDialog(User user) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_edit_user, null);
         EditText etName = dialogView.findViewById(R.id.etEditUserName);
-        android.widget.RadioGroup rgRole = dialogView.findViewById(R.id.rgEditUserRole);
-        android.widget.RadioGroup rgStatus = dialogView.findViewById(R.id.rgEditUserStatus);
+        RadioGroup rgRole = dialogView.findViewById(R.id.rgEditUserRole);
+        RadioGroup rgStatus = dialogView.findViewById(R.id.rgEditUserStatus);
 
         etName.setText(user.getName());
         String currentRole = user.getRole() != null ? user.getRole() : "Client";
@@ -362,6 +382,14 @@ public class AdminFragment extends Fragment {
 
             Service s2 = new Service(UUID.randomUUID().toString(), "CS Assignment Help", "Tutor for CS projects.", 50, "AI/ML", currentUserId, adminName, adminBio, 4.8f, "Approved");
             db.collection("services").document(s2.getServiceId()).set(s2);
+
+            // Seed projects
+            String posterName = adminName != null ? adminName : "DUET User";
+            Project p1 = new Project(UUID.randomUUID().toString(), "Android Mobile App Development", "Looking for a developer to build a mobile app in Java/Kotlin.", 300.0, currentUserId, posterName, "Android Dev", "Pending", Timestamp.now());
+            db.collection("projects").document(p1.getProjectId()).set(p1);
+
+            Project p2 = new Project(UUID.randomUUID().toString(), "Redesign Portfolio Website", "Need a clean responsive HTML/CSS/JS web design.", 150.0, currentUserId, posterName, "Web Dev", "Approved", Timestamp.now());
+            db.collection("projects").document(p2.getProjectId()).set(p2);
 
             Toast.makeText(getContext(), "Sample data generated successfully!", Toast.LENGTH_SHORT).show();
         });
