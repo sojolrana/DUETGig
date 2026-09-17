@@ -344,13 +344,45 @@ public class AdminFragment extends Fragment {
                 .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Category deleted", Toast.LENGTH_SHORT).show());
     }
 
-    private void clearAllServices() {
-        db.collection("services").get().addOnSuccessListener(queryDocumentSnapshots -> {
-            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                doc.getReference().delete();
-            }
-            Toast.makeText(getContext(), "All marketplace services cleared!", Toast.LENGTH_SHORT).show();
-        });
+    private void resetAllDatabaseData() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Reset All Database Data")
+                .setMessage("Are you sure you want to clear all projects, services, chats, and categories? This action cannot be undone.")
+                .setPositiveButton("Reset & Re-seed Data", (dialog, which) -> {
+                    db.collection("services").get().addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            doc.getReference().delete();
+                        }
+                    });
+
+                    db.collection("projects").get().addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            doc.getReference().collection("bids").get().addOnSuccessListener(bids -> {
+                                for (QueryDocumentSnapshot bDoc : bids) {
+                                    bDoc.getReference().delete();
+                                }
+                            });
+                            doc.getReference().delete();
+                        }
+                    });
+
+                    db.collection("chats").get().addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            doc.getReference().delete();
+                        }
+                    });
+
+                    db.collection("categories").get().addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            doc.getReference().delete();
+                        }
+                    });
+
+                    seedSampleData();
+                    Toast.makeText(getContext(), "All old database data cleared and re-seeded!", Toast.LENGTH_LONG).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void seedSampleData() {
