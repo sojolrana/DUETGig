@@ -16,9 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.sojolrana.duetgig.ChatActivity;
+import com.sojolrana.duetgig.LoginActivity;
 import com.sojolrana.duetgig.R;
 import com.sojolrana.duetgig.adapters.ChatListAdapter;
 import com.sojolrana.duetgig.models.Chat;
@@ -34,7 +34,7 @@ public class MessagesFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
-    private View emptyStateLayout;
+    private TextView emptyStateLayout;
 
     @Nullable
     @Override
@@ -71,7 +71,15 @@ public class MessagesFragment extends Fragment {
     }
 
     private void loadChats() {
-        if (mAuth.getCurrentUser() == null) return;
+        if (mAuth.getCurrentUser() == null) {
+            progressBar.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            emptyStateLayout.setText("Please log in to view and send messages.\nTap here to Log In / Sign Up.");
+            emptyStateLayout.setVisibility(View.VISIBLE);
+            emptyStateLayout.setOnClickListener(v -> startActivity(new Intent(getContext(), LoginActivity.class)));
+            return;
+        }
+
         String currentUserId = mAuth.getCurrentUser().getUid();
 
         progressBar.setVisibility(View.VISIBLE);
@@ -84,13 +92,13 @@ public class MessagesFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
                     if (error != null || value == null) return;
-                    
+
                     chatList.clear();
                     for (QueryDocumentSnapshot document : value) {
                         Chat chat = document.toObject(Chat.class);
                         chatList.add(chat);
                     }
-                    
+
                     // Sort locally by lastTimestamp descending
                     chatList.sort((c1, c2) -> {
                         if (c1.getLastTimestamp() == null || c2.getLastTimestamp() == null) return 0;
@@ -104,6 +112,7 @@ public class MessagesFragment extends Fragment {
 
     private void updateEmptyState() {
         if (chatList.isEmpty()) {
+            emptyStateLayout.setText("No messages yet");
             emptyStateLayout.setVisibility(View.VISIBLE);
         } else {
             emptyStateLayout.setVisibility(View.GONE);

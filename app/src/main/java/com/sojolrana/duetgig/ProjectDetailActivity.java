@@ -76,6 +76,15 @@ public class ProjectDetailActivity extends AppCompatActivity {
     }
 
     private void setupBidding() {
+        if (mAuth.getCurrentUser() == null) {
+            btnApply.setVisibility(View.VISIBLE);
+            btnApply.setText("Apply / Place Bid");
+            bidsTitle.setVisibility(View.GONE);
+            bidsRecyclerView.setVisibility(View.GONE);
+            btnApply.setOnClickListener(v -> showLoginPrompt("Log In Required", "Please log in or sign up to place a bid on this project."));
+            return;
+        }
+
         String currentUserId = mAuth.getCurrentUser().getUid();
 
         if (currentUserId.equals(posterId)) {
@@ -89,6 +98,15 @@ public class ProjectDetailActivity extends AppCompatActivity {
             bidsRecyclerView.setVisibility(View.GONE);
             btnApply.setOnClickListener(v -> showAddBidDialog());
         }
+    }
+
+    private void showLoginPrompt(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Log In / Sign Up", (dialog, which) -> startActivity(new Intent(this, LoginActivity.class)))
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void loadBids() {
@@ -152,8 +170,9 @@ public class ProjectDetailActivity extends AppCompatActivity {
     }
 
     private void submitBid(double amount, String proposal) {
+        if (mAuth.getCurrentUser() == null) return;
         String currentUserId = mAuth.getCurrentUser().getUid();
-        
+
         db.collection("users").document(currentUserId).get().addOnSuccessListener(userDoc -> {
             String bidderName = userDoc.getString("name");
             String bidId = UUID.randomUUID().toString();
@@ -161,9 +180,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
             db.collection("projects").document(projectId).collection("bids")
                     .document(bidId).set(bid)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Bid submitted successfully", Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnSuccessListener(aVoid -> Toast.makeText(this, "Bid submitted successfully", Toast.LENGTH_SHORT).show());
         });
     }
 
@@ -193,10 +210,10 @@ public class ProjectDetailActivity extends AppCompatActivity {
             chat.put("userIds", Arrays.asList(currentUserId, providerId));
             chat.put("userNames", userNames);
             chat.put("lastMessage", "Conversation started");
-            chat.put("lastTimestamp", com.google.firebase.Timestamp.now());
+            chat.put("lastTimestamp", Timestamp.now());
 
             db.collection("chats").document(chatId)
-                    .set(chat, com.google.firebase.firestore.SetOptions.merge())
+                    .set(chat, SetOptions.merge())
                     .addOnSuccessListener(aVoid -> {
                         Intent intent = new Intent(this, ChatActivity.class);
                         intent.putExtra("chatId", chatId);
