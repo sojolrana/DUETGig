@@ -9,19 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.sojolrana.duetgig.LoginActivity;
 import com.sojolrana.duetgig.PostProjectActivity;
 import com.sojolrana.duetgig.ProjectDetailActivity;
 import com.sojolrana.duetgig.R;
@@ -37,7 +38,6 @@ public class ProjectsFragment extends Fragment {
     private ProjectAdapter adapter;
     private List<Project> projectList;
     private List<Project> fullProjectList;
-    private FloatingActionButton fab;
     private FirebaseFirestore db;
     private ProgressBar progressBar;
     private View emptyStateLayout;
@@ -51,7 +51,7 @@ public class ProjectsFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
 
         recyclerView = view.findViewById(R.id.projectsRecyclerView);
-        fab = view.findViewById(R.id.fabPostProject);
+        FloatingActionButton fab = view.findViewById(R.id.fabPostProject);
         progressBar = view.findViewById(R.id.projectProgressBar);
         emptyStateLayout = view.findViewById(R.id.projectEmptyStateLayout);
         searchEditText = view.findViewById(R.id.projectSearchEditText);
@@ -61,10 +61,24 @@ public class ProjectsFragment extends Fragment {
         loadProjects();
 
         fab.setOnClickListener(v -> {
-            startActivity(new Intent(getContext(), PostProjectActivity.class));
+            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                showLoginPrompt("Log In Required", "Please log in or sign up to post a project on DUETGig.");
+            } else {
+                startActivity(new Intent(getContext(), PostProjectActivity.class));
+            }
         });
 
         return view;
+    }
+
+    private void showLoginPrompt(String title, String message) {
+        if (getContext() == null) return;
+        new AlertDialog.Builder(requireContext())
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Log In / Sign Up", (dialog, which) -> startActivity(new Intent(getContext(), LoginActivity.class)))
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void setupRecyclerView() {
@@ -132,7 +146,6 @@ public class ProjectsFragment extends Fragment {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Project project = document.toObject(Project.class);
                             String status = project.getStatus();
-                            // Show approved projects to regular users
                             if ("Approved".equals(status)) {
                                 fullProjectList.add(project);
                             }

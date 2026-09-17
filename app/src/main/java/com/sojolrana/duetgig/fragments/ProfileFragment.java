@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.button.MaterialButton;
@@ -21,9 +22,9 @@ import com.sojolrana.duetgig.R;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView name, email, bio;
+    private TextView name, email, bio, bioTitle;
     private Chip roleChip;
-    private MaterialButton btnEdit, btnSignOut;
+    private MaterialButton btnEdit, btnSignOut, btnEarnings;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -37,11 +38,12 @@ public class ProfileFragment extends Fragment {
 
         name = view.findViewById(R.id.profileName);
         email = view.findViewById(R.id.profileEmail);
+        bioTitle = view.findViewById(R.id.bioTitle);
         bio = view.findViewById(R.id.profileBio);
         roleChip = view.findViewById(R.id.profileRoleChip);
         btnEdit = view.findViewById(R.id.btnEditProfile);
         btnSignOut = view.findViewById(R.id.btnSignOut);
-        MaterialButton btnEarnings = view.findViewById(R.id.btnViewEarnings);
+        btnEarnings = view.findViewById(R.id.btnViewEarnings);
 
         loadUserProfile();
 
@@ -56,6 +58,29 @@ public class ProfileFragment extends Fragment {
                     .commit();
         });
 
+        return view;
+    }
+
+    private void loadUserProfile() {
+        if (mAuth.getCurrentUser() == null) {
+            name.setText("Guest User");
+            email.setText("Welcome to DUETGig");
+            roleChip.setText("Visitor Mode");
+            if (bioTitle != null) bioTitle.setText("Welcome!");
+            bio.setText("Log in or sign up to post services, request projects, bid on gigs, and message providers.");
+            btnEdit.setVisibility(View.GONE);
+            btnEarnings.setVisibility(View.GONE);
+
+            btnSignOut.setText("Log In / Sign Up");
+            btnSignOut.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary));
+            btnSignOut.setOnClickListener(v -> {
+                startActivity(new Intent(getContext(), LoginActivity.class));
+            });
+            return;
+        }
+
+        btnSignOut.setText("Sign Out");
+        btnSignOut.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark));
         btnSignOut.setOnClickListener(v -> {
             mAuth.signOut();
             Intent intent = new Intent(getContext(), LoginActivity.class);
@@ -63,11 +88,6 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
-        return view;
-    }
-
-    private void loadUserProfile() {
-        if (mAuth.getCurrentUser() == null) return;
         String userId = mAuth.getCurrentUser().getUid();
 
         db.collection("users").document(userId)

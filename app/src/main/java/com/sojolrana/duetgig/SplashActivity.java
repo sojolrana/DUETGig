@@ -35,31 +35,20 @@ public class SplashActivity extends AppCompatActivity {
                             Boolean isAdmin = doc.getBoolean("isAdmin");
                             if ("Pending".equals(status) && !Boolean.TRUE.equals(isAdmin)) {
                                 mAuth.signOut();
-                                navigateToLogin();
-                                return;
-                            }
-                            if ("Blocked".equals(status)) {
+                            } else if ("Blocked".equals(status)) {
                                 mAuth.signOut();
-                                navigateToLogin();
-                                return;
                             }
                         }
                         navigateToMain();
                     })
                     .addOnFailureListener(e -> navigateToMain());
         } else {
-            navigateToLogin();
+            navigateToMain();
         }
     }
 
     private void navigateToMain() {
         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    private void navigateToLogin() {
-        Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
     }

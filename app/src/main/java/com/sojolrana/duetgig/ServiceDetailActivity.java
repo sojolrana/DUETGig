@@ -80,15 +80,34 @@ public class ServiceDetailActivity extends AppCompatActivity {
         loadReviews();
 
         btnHire.setOnClickListener(v -> {
-            startChat(providerId, sProvider);
+            if (mAuth.getCurrentUser() == null) {
+                showLoginPrompt("Log In Required", "Please log in or sign up to hire or chat with this service provider.");
+            } else {
+                startChat(providerId, sProvider);
+            }
         });
 
-        btnWriteReview.setOnClickListener(v -> showAddReviewDialog());
-        
+        btnWriteReview.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                showLoginPrompt("Log In Required", "Please log in or sign up to write a review.");
+            } else {
+                showAddReviewDialog();
+            }
+        });
+
         // Hide review button if current user is the provider
         if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().getUid().equals(providerId)) {
             btnWriteReview.setVisibility(View.GONE);
         }
+    }
+
+    private void showLoginPrompt(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Log In / Sign Up", (dialog, which) -> startActivity(new Intent(this, LoginActivity.class)))
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void setupReviews() {
@@ -142,9 +161,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
 
             db.collection("services").document(serviceId).collection("reviews")
                     .document(reviewId).set(review)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Review submitted", Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnSuccessListener(aVoid -> Toast.makeText(this, "Review submitted", Toast.LENGTH_SHORT).show());
         });
     }
 
@@ -161,7 +178,6 @@ public class ServiceDetailActivity extends AppCompatActivity {
             String currentUserName = userDoc.getString("name");
             if (currentUserName == null) currentUserName = "User";
 
-            // Generate a consistent Chat ID for these two users
             String[] ids = {currentUserId, providerId};
             Arrays.sort(ids);
             String chatId = ids[0] + "_" + ids[1];
@@ -175,7 +191,7 @@ public class ServiceDetailActivity extends AppCompatActivity {
             chat.put("userIds", Arrays.asList(currentUserId, providerId));
             chat.put("userNames", userNames);
             chat.put("lastMessage", "Conversation started");
-            chat.put("lastTimestamp", com.google.firebase.Timestamp.now());
+            chat.put("lastTimestamp", Timestamp.now());
 
             db.collection("chats").document(chatId)
                     .set(chat, SetOptions.merge())
