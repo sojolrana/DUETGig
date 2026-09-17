@@ -11,12 +11,13 @@ public class Service {
     private String providerBio;
     private float rating;
     private String status; // "Pending", "Approved", "Rejected"
+    private String portfolioUrl;
 
     public Service() {
         // Required for Firebase
     }
 
-    public Service(String serviceId, String title, String description, double price, String category, String providerId, String providerName, String providerBio, float rating, String status) {
+    public Service(String serviceId, String title, String description, double price, String category, String providerId, String providerName, String providerBio, float rating, String status, String portfolioUrl) {
         this.serviceId = serviceId;
         this.title = title;
         this.description = description;
@@ -27,6 +28,7 @@ public class Service {
         this.providerBio = providerBio;
         this.rating = rating;
         this.status = status != null ? status : "Pending";
+        this.portfolioUrl = portfolioUrl;
     }
 
     public String getServiceId() { return serviceId; }
@@ -39,6 +41,7 @@ public class Service {
     public String getProviderBio() { return providerBio; }
     public float getRating() { return rating; }
     public String getStatus() { return status != null ? status : "Pending"; }
+    public String getPortfolioUrl() { return portfolioUrl; }
 
     public void setServiceId(String serviceId) { this.serviceId = serviceId; }
     public void setTitle(String title) { this.title = title; }
@@ -50,4 +53,5 @@ public class Service {
     public void setProviderBio(String providerBio) { this.providerBio = providerBio; }
     public void setRating(float rating) { this.rating = rating; }
     public void setStatus(String status) { this.status = status; }
+    public void setPortfolioUrl(String portfolioUrl) { this.portfolioUrl = portfolioUrl; }
 }

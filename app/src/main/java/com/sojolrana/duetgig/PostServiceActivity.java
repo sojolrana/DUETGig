@@ -22,8 +22,8 @@ import java.util.UUID;
 
 public class PostServiceActivity extends AppCompatActivity {
 
-    private TextInputLayout titleLayout, descLayout, priceLayout, categoryLayout;
-    private TextInputEditText etTitle, etDesc, etPrice;
+    private TextInputLayout titleLayout, descLayout, priceLayout, categoryLayout, portfolioLayout;
+    private TextInputEditText etTitle, etDesc, etPrice, etPortfolio;
     private AutoCompleteTextView categoryDropdown;
     private MaterialButton btnPost;
     private FirebaseAuth mAuth;
@@ -43,9 +43,11 @@ public class PostServiceActivity extends AppCompatActivity {
         descLayout = findViewById(R.id.serviceDescLayout);
         priceLayout = findViewById(R.id.servicePriceLayout);
         categoryLayout = findViewById(R.id.serviceCategoryLayout);
+        portfolioLayout = findViewById(R.id.servicePortfolioLayout);
         etTitle = findViewById(R.id.etServiceTitle);
         etDesc = findViewById(R.id.etServiceDesc);
         etPrice = findViewById(R.id.etServicePrice);
+        etPortfolio = findViewById(R.id.etServicePortfolio);
         categoryDropdown = findViewById(R.id.categoryDropdown);
         btnPost = findViewById(R.id.btnPostService);
 
@@ -56,9 +58,10 @@ public class PostServiceActivity extends AppCompatActivity {
             String desc = etDesc.getText() != null ? etDesc.getText().toString().trim() : "";
             String priceStr = etPrice.getText() != null ? etPrice.getText().toString().trim() : "";
             String category = categoryDropdown.getText().toString();
+            String portfolioUrl = etPortfolio.getText() != null ? etPortfolio.getText().toString().trim() : "";
 
             if (validateInputs(title, desc, priceStr, category)) {
-                postService(title, desc, priceStr, category);
+                postService(title, desc, priceStr, category, portfolioUrl);
             }
         });
     }
@@ -110,7 +113,7 @@ public class PostServiceActivity extends AppCompatActivity {
         });
     }
 
-    private void postService(String title, String desc, String priceStr, String category) {
+    private void postService(String title, String desc, String priceStr, String category, String portfolioUrl) {
         double price = Double.parseDouble(priceStr);
         String userId = mAuth.getCurrentUser().getUid();
 
@@ -121,7 +124,7 @@ public class PostServiceActivity extends AppCompatActivity {
                 String providerBio = documentSnapshot.getString("bio");
                 
                 String serviceId = UUID.randomUUID().toString();
-                Service service = new Service(serviceId, title, desc, price, category, userId, providerName, providerBio, 5.0f, "Pending");
+                Service service = new Service(serviceId, title, desc, price, category, userId, providerName, providerBio, 5.0f, "Pending", portfolioUrl);
 
                 db.collection("services").document(serviceId).set(service).addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Service submitted for admin approval", Toast.LENGTH_LONG).show();

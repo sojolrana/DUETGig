@@ -90,6 +90,22 @@
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/servicePortfolioLayout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Portfolio / Sample Work Link (optional)"
+            app:layout_constraintTop_toBottomOf="@id/serviceCategoryLayout"
+            android:layout_marginTop="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etServicePortfolio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textUri" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPostService"
             android:layout_width="match_parent"
@@ -98,8 +114,8 @@
             android:textAllCaps="false"
             android:textSize="18sp"
             app:cornerRadius="12dp"
-            app:layout_constraintTop_toBottomOf="@id/serviceCategoryLayout"
-            android:layout_marginTop="40dp" />
+            app:layout_constraintTop_toBottomOf="@id/servicePortfolioLayout"
+            android:layout_marginTop="32dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
