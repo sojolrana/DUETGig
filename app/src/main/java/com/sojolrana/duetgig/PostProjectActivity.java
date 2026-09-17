@@ -1,6 +1,8 @@
 package com.sojolrana.duetgig;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -12,17 +14,21 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.sojolrana.duetgig.models.Project;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class PostProjectActivity extends AppCompatActivity {
 
     private TextInputLayout titleLayout, descLayout, budgetLayout, categoryLayout;
-    private TextInputEditText etTitle, etDesc, etBudget, etCategory;
-    private MaterialButton btnPost;
+    private TextInputEditText etTitle, etDesc, etBudget;
+    private AutoCompleteTextView categoryDropdown;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private final List<String> categories = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,18 +46,43 @@ public class PostProjectActivity extends AppCompatActivity {
         etTitle = findViewById(R.id.etProjectTitle);
         etDesc = findViewById(R.id.etProjectDesc);
         etBudget = findViewById(R.id.etProjectBudget);
-        etCategory = findViewById(R.id.etProjectCategory);
-        btnPost = findViewById(R.id.btnPost);
+        categoryDropdown = findViewById(R.id.projectCategoryDropdown);
+        MaterialButton btnPost = findViewById(R.id.btnPost);
+
+        loadCategories();
 
         btnPost.setOnClickListener(v -> {
             String title = etTitle.getText() != null ? etTitle.getText().toString().trim() : "";
             String desc = etDesc.getText() != null ? etDesc.getText().toString().trim() : "";
             String budgetStr = etBudget.getText() != null ? etBudget.getText().toString().trim() : "";
-            String category = etCategory.getText() != null ? etCategory.getText().toString().trim() : "";
+            String category = categoryDropdown.getText() != null ? categoryDropdown.getText().toString().trim() : "";
 
             if (validateInputs(title, desc, budgetStr, category)) {
                 double budget = Double.parseDouble(budgetStr);
                 postProject(title, desc, budget, category);
+            }
+        });
+    }
+
+    private void loadCategories() {
+        db.collection("categories").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                categories.clear();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    String name = document.getString("name");
+                    if (name != null) {
+                        categories.add(name);
+                    }
+                }
+                if (categories.isEmpty()) {
+                    categories.add("Android Dev");
+                    categories.add("Web Dev");
+                    categories.add("AI/ML");
+                    categories.add("UI/UX");
+                    categories.add("Graphics");
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, categories);
+                categoryDropdown.setAdapter(adapter);
             }
         });
     }
@@ -112,9 +143,7 @@ public class PostProjectActivity extends AppCompatActivity {
                         Toast.makeText(this, "Project posted successfully", Toast.LENGTH_SHORT).show();
                         finish();
                     })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Error posting project: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnFailureListener(e -> Toast.makeText(this, "Error posting project: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         }).addOnFailureListener(e -> {
             String posterName = mAuth.getCurrentUser().getEmail() != null ? mAuth.getCurrentUser().getEmail() : "DUET User";
             Project project = new Project(projectId, title, desc, budget, posterId, posterName, category, "Pending", Timestamp.now());
