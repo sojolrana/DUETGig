@@ -46,11 +46,19 @@ public class ChatActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(this, "Please log in to view chat", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         chatId = getIntent().getStringExtra("chatId");
         String otherUserName = getIntent().getStringExtra("otherUserName");
 
         TextView toolbarTitle = findViewById(R.id.toolbarUserName);
-        toolbarTitle.setText(otherUserName);
+        if (toolbarTitle != null && otherUserName != null) {
+            toolbarTitle.setText(otherUserName);
+        }
 
         recyclerView = findViewById(R.id.messagesRecyclerView);
         etMessage = findViewById(R.id.etMessage);
@@ -64,7 +72,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         messageList = new ArrayList<>();
-        adapter = new MessageAdapter(messageList, mAuth.getCurrentUser().getUid());
+        String currentUid = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : "";
+        adapter = new MessageAdapter(messageList, currentUid);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -72,6 +81,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void listenForMessages() {
+        if (chatId == null) return;
         db.collection("chats").document(chatId).collection("messages")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, error) -> {
@@ -83,12 +93,15 @@ public class ChatActivity extends AppCompatActivity {
                             messageList.add(message);
                         }
                         adapter.notifyDataSetChanged();
-                        recyclerView.scrollToPosition(messageList.size() - 1);
+                        if (messageList.size() > 0) {
+                            recyclerView.scrollToPosition(messageList.size() - 1);
+                        }
                     }
                 });
     }
 
     private void sendMessage() {
+        if (mAuth.getCurrentUser() == null || chatId == null) return;
         String content = etMessage.getText() != null ? etMessage.getText().toString().trim() : "";
         if (content.isEmpty()) return;
 
@@ -106,6 +119,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void updateChatLastMessage(String content) {
+        if (chatId == null) return;
         Map<String, Object> update = new HashMap<>();
         update.put("lastMessage", content);
         update.put("lastTimestamp", FieldValue.serverTimestamp());
