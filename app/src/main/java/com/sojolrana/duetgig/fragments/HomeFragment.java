@@ -9,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,7 +22,9 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.sojolrana.duetgig.LoginActivity;
 import com.sojolrana.duetgig.PostServiceActivity;
 import com.sojolrana.duetgig.R;
 import com.sojolrana.duetgig.ServiceDetailActivity;
@@ -37,7 +39,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private ServiceAdapter adapter;
     private List<Service> serviceList;
-    private List<Service> fullServiceList; // For local search
+    private List<Service> fullServiceList;
     private ChipGroup categoryChipGroup;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -67,21 +69,44 @@ public class HomeFragment extends Fragment {
         loadCategories();
         loadServices("All");
 
-        fab.setOnClickListener(v -> startActivity(new Intent(getContext(), PostServiceActivity.class)));
+        fab.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                showLoginPrompt("Log In Required", "Please log in or sign up to post a service on DUETGig.");
+            } else {
+                startActivity(new Intent(getContext(), PostServiceActivity.class));
+            }
+        });
 
         return view;
     }
 
     private void checkUserRole() {
-        if (mAuth.getCurrentUser() == null) return;
+        if (mAuth.getCurrentUser() == null) {
+            fab.setVisibility(View.VISIBLE);
+            return;
+        }
         db.collection("users").document(mAuth.getCurrentUser().getUid()).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 String role = documentSnapshot.getString("role");
-                if ("Service Provider".equals(role)) {
+                if ("Service Provider".equals(role) || "Admin".equals(role)) {
                     fab.setVisibility(View.VISIBLE);
+                } else {
+                    fab.setVisibility(View.GONE);
                 }
             }
         });
+    }
+
+    private void showLoginPrompt(String title, String message) {
+        if (getContext() == null) return;
+        new AlertDialog.Builder(requireContext())
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("Log In / Sign Up", (dialog, which) -> {
+                    startActivity(new Intent(getContext(), LoginActivity.class));
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void setupRecyclerView() {
@@ -138,7 +163,7 @@ public class HomeFragment extends Fragment {
         db.collection("categories")
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && getContext() != null) {
                         categoryChipGroup.removeAllViews();
                         addCategoryChip("All");
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -152,11 +177,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void addCategoryChip(String categoryName) {
+        if (getContext() == null) return;
         Chip chip = new Chip(getContext());
         chip.setText(categoryName);
         chip.setCheckable(true);
         chip.setClickable(true);
-        
+
         if (categoryName.equals("All")) {
             chip.setChecked(true);
         }
@@ -170,7 +196,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setVisibility(View.GONE);
         emptyStateLayout.setVisibility(View.GONE);
 
-        com.google.firebase.firestore.Query query;
+        Query query;
         if (category.equals("All")) {
             query = db.collection("services");
         } else {

@@ -4,8 +4,8 @@ import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.fragment.app.Fragment;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        
+
         // Initial fragment
         loadFragment(new HomeFragment());
 
@@ -55,12 +55,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkAdminStatus(BottomNavigationView bottomNav) {
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            bottomNav.getMenu().findItem(R.id.nav_admin).setVisible(false);
+            return;
+        }
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseFirestore.getInstance().collection("users").document(uid).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists() && Boolean.TRUE.equals(documentSnapshot.getBoolean("isAdmin"))) {
                         bottomNav.getMenu().findItem(R.id.nav_admin).setVisible(true);
+                    } else {
+                        bottomNav.getMenu().findItem(R.id.nav_admin).setVisible(false);
                     }
                 });
     }
