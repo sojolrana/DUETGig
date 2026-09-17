@@ -84,7 +84,7 @@ public class AdminFragment extends Fragment {
 
         btnAdd.setOnClickListener(v -> addCategory());
         btnSeed.setOnClickListener(v -> seedSampleData());
-        btnClear.setOnClickListener(v -> clearAllServices());
+        btnClear.setOnClickListener(v -> resetAllDatabaseData());
         
         loadCategories();
         loadUsers();

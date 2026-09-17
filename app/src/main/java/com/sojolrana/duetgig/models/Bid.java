@@ -28,13 +28,26 @@ public class Bid {
     }
 
     public String getBidId() { return bidId; }
+    public void setBidId(String bidId) { this.bidId = bidId; }
+
     public String getProjectId() { return projectId; }
+    public void setProjectId(String projectId) { this.projectId = projectId; }
+
     public String getBidderId() { return bidderId; }
+    public void setBidderId(String bidderId) { this.bidderId = bidderId; }
+
     public String getBidderName() { return bidderName; }
+    public void setBidderName(String bidderName) { this.bidderName = bidderName; }
+
     public double getAmount() { return amount; }
+    public void setAmount(double amount) { this.amount = amount; }
+
     public String getProposal() { return proposal; }
+    public void setProposal(String proposal) { this.proposal = proposal; }
+
     public String getStatus() { return status; }
-    public Timestamp getTimestamp() { return timestamp; }
-    
     public void setStatus(String status) { this.status = status; }
+
+    public Timestamp getTimestamp() { return timestamp; }
+    public void setTimestamp(Timestamp timestamp) { this.timestamp = timestamp; }
 }
