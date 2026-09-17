@@ -24,9 +24,20 @@ public class Review {
     }
 
     public String getReviewId() { return reviewId; }
+    public void setReviewId(String reviewId) { this.reviewId = reviewId; }
+
     public String getServiceId() { return serviceId; }
+    public void setServiceId(String serviceId) { this.serviceId = serviceId; }
+
     public String getReviewerName() { return reviewerName; }
+    public void setReviewerName(String reviewerName) { this.reviewerName = reviewerName; }
+
     public float getRating() { return rating; }
+    public void setRating(float rating) { this.rating = rating; }
+
     public String getComment() { return comment; }
+    public void setComment(String comment) { this.comment = comment; }
+
     public Timestamp getTimestamp() { return timestamp; }
+    public void setTimestamp(Timestamp timestamp) { this.timestamp = timestamp; }
 }

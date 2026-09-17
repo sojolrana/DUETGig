@@ -144,6 +144,10 @@ public class ProjectDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Bid " + status, Toast.LENGTH_SHORT).show();
                     if (status.equals("Accepted")) {
+                        bid.setStatus("Accepted");
+                        db.collection("users").document(bid.getBidderId())
+                                .collection("earnings").document(bid.getBidId())
+                                .set(bid);
                         startChat(bid.getBidderId(), bid.getBidderName());
                     }
                 });
