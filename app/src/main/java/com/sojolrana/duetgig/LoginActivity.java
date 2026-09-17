@@ -2,6 +2,7 @@ package com.sojolrana.duetgig;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,7 +22,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextInputLayout emailLayout, passwordLayout;
     private TextInputEditText emailEditText, passwordEditText;
-    private MaterialButton btnLogin, btnSignUp;
+    private MaterialButton btnLogin;
     private FirebaseAuth mAuth;
 
     @Override
@@ -37,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.email);
         passwordEditText = findViewById(R.id.password);
         btnLogin = findViewById(R.id.btnLogin);
-        btnSignUp = findViewById(R.id.btnSignUp);
+        MaterialButton btnSignUp = findViewById(R.id.btnSignUp);
 
         btnLogin.setOnClickListener(v -> {
             String email = emailEditText.getText() != null ? emailEditText.getText().toString().trim() : "";
@@ -54,13 +55,45 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mAuth != null && mAuth.getCurrentUser() != null) {
+            checkExistingUserSession(mAuth.getCurrentUser().getUid());
+        }
+    }
+
+    private void checkExistingUserSession(String userId) {
+        FirebaseFirestore.getInstance().collection("users").document(userId).get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        String status = doc.getString("status");
+                        Boolean isAdmin = doc.getBoolean("isAdmin");
+                        if ("Pending".equals(status) && !Boolean.TRUE.equals(isAdmin)) {
+                            mAuth.signOut();
+                            Toast.makeText(LoginActivity.this, "Your account is pending admin approval.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        if ("Blocked".equals(status)) {
+                            mAuth.signOut();
+                            Toast.makeText(LoginActivity.this, "Your account has been blocked by admin.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                    saveFcmToken();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                });
+    }
+
     private boolean validateInputs(String email, String password) {
         boolean isValid = true;
 
         if (email.isEmpty()) {
             emailLayout.setError("Email is required");
             isValid = false;
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailLayout.setError("Enter a valid email address");
             isValid = false;
         } else {
@@ -90,12 +123,12 @@ public class LoginActivity extends AppCompatActivity {
                                     if (doc.exists()) {
                                         String status = doc.getString("status");
                                         Boolean isAdmin = doc.getBoolean("isAdmin");
-                                        if (status != null && "Pending".equals(status) && !Boolean.TRUE.equals(isAdmin)) {
+                                        if ("Pending".equals(status) && !Boolean.TRUE.equals(isAdmin)) {
                                             mAuth.signOut();
                                             Toast.makeText(LoginActivity.this, "Your account is pending admin approval.", Toast.LENGTH_LONG).show();
                                             return;
                                         }
-                                        if (status != null && "Blocked".equals(status)) {
+                                        if ("Blocked".equals(status)) {
                                             mAuth.signOut();
                                             Toast.makeText(LoginActivity.this, "Your account has been blocked by admin.", Toast.LENGTH_LONG).show();
                                             return;
@@ -107,9 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     finish();
                                 })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(LoginActivity.this, "Error checking account status", Toast.LENGTH_SHORT).show();
-                                });
+                                .addOnFailureListener(e -> Toast.makeText(LoginActivity.this, "Error checking account status", Toast.LENGTH_SHORT).show());
                     } else {
                         String error = task.getException() != null ? task.getException().getMessage() : "Unknown error";
                         Toast.makeText(LoginActivity.this, "Authentication failed: " + error,
