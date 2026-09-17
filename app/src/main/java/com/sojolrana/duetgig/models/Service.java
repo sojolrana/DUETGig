@@ -31,6 +31,10 @@ public class Service {
         this.portfolioUrl = portfolioUrl;
     }
 
+    public Service(String serviceId, String title, String description, double price, String category, String providerId, String providerName, String providerBio, float rating, String status) {
+        this(serviceId, title, description, price, category, providerId, providerName, providerBio, rating, status, "");
+    }
+
     public String getServiceId() { return serviceId; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
