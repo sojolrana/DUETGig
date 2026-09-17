@@ -76,18 +76,18 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/projectCategoryLayout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Category (e.g. Web, Robotics)"
+            android:hint="Select Category"
             app:layout_constraintTop_toBottomOf="@id/projectBudgetLayout"
             android:layout_marginTop="16dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etProjectCategory"
+            <AutoCompleteTextView
+                android:id="@+id/projectCategoryDropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
+                android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
